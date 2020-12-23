@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "378701187972",
+    "firebase_url": "https://jmepro.firebaseio.com",
+    "project_id": "jmepro",
+    "storage_bucket": "jmepro.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:378701187972:android:35ab21f2251565d4882bd1",
+        "android_client_info": {
+          "package_name": "com.example.gior"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "378701187972-11u5fpp76g1m8te1jdid3g3s6k5qkro8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCf97KSm1ufTwcAdNjcjDSNrVgbkw4JJzk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "378701187972-11u5fpp76g1m8te1jdid3g3s6k5qkro8.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "378701187972-6f0152mnbc3gldvmu79bromp549roetq.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.gior"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
