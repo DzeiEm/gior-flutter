@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:gior/providers/procedures.dart';
-import 'package:gior/screens/admin/add_procedure_admin.dart';
+import 'package:gior/providers/procedures_pr.dart';
+import 'package:gior/screens/add_procedure_admin.dart';
 import 'package:gior/widget/procedure_list.dart';
 import 'package:provider/provider.dart';
 
@@ -49,6 +49,7 @@ class _ProcedureListScreenState extends State<ProcedureListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print('----------PROCEDURE LIST SCREEN-----------');
     final procedures = Provider.of<Procedures>(context);
     final prodList = procedures.procedures;
     var ifAdmin = true;

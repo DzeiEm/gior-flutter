@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:gior/data/holidays_dates.dart';
 import 'package:gior/model/procedure.dart';
-import 'package:gior/providers/procedures.dart';
+import 'package:gior/providers/procedures_pr.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:provider/provider.dart';
 

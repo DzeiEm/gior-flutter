@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:gior/providers/auth.dart';
-import 'package:gior/screens/contact_fld.dart/chat_screen.dart';
-import 'package:gior/screens/contact_fld.dart/location_screen.dart';
-import 'package:gior/screens/contact_fld.dart/profile.dart';
+import 'package:gior/firebase/auth.dart';
+import 'package:gior/screens/chat_screen.dart';
+import 'package:gior/screens/location_screen.dart';
+import 'package:gior/screens/profile_screen.dart';
 import 'package:gior/screens/deal_screen.dart';
 import 'package:gior/screens/gallery_screen.dart';
-import 'package:provider/provider.dart';
-
 
 class SettingsScreen extends StatelessWidget {
   static const routeName = '/ setting-screen';
   @override
   Widget build(BuildContext context) {
+    print('----------SETTINGS SCREEN------------');
+    Auth _auth = Auth();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.blueGrey[800],
@@ -31,10 +31,7 @@ class SettingsScreen extends StatelessWidget {
                 size: 30,
                 color: Colors.red[300],
               ),
-              onPressed: () {
-                // log out user
-                Provider.of<Auth>(context, listen: false).logOut();
-              }),
+              onPressed: _auth.autoLogin,),
         ],
       ),
       body: Container(

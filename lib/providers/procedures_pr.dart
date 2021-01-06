@@ -1,8 +1,11 @@
 import 'dart:convert';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:gior/http/http_exeptions.dart';
 import 'package:gior/model/procedure.dart';
 import 'package:http/http.dart' as http;
+
+FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
 class Procedures extends ChangeNotifier {
   List<Procedure> _procedures = [];
@@ -23,8 +26,7 @@ class Procedures extends ChangeNotifier {
     // final filterString =
     //     filterByUser ? 'orderBy="creatorId"equalTo="$userId"' : '';
 
-    final url =
-        'https://jmepro.firebaseio.com/procedures.json';
+    final url = 'https://jmepro.firebaseio.com/procedures.json';
     try {
       final response = await http.get(url);
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
@@ -50,6 +52,13 @@ class Procedures extends ChangeNotifier {
   }
 
   Future<void> addProcedure(Procedure newProcedure) async {
+    await _firestore.collection('procedures').add({
+      'id': newProcedure.id,
+      'title': newProcedure.title,
+      'description': newProcedure.description,
+      'price': newProcedure.price,
+    });
+
     final url = 'https://jmepro.firebaseio.com/procedures.json';
     try {
       final response = await http.post(
@@ -88,8 +97,7 @@ class Procedures extends ChangeNotifier {
     final procedureIndex =
         _procedures.indexWhere((procedureElement) => procedureElement.id == id);
     if (procedureIndex >= 0) {
-      final url =
-          'https://jmepro.firebaseio.com/procedures/$id.json';
+      final url = 'https://jmepro.firebaseio.com/procedures/$id.json';
       await http.patch(url,
           body: json.encode({
             'title': editedProcedure.title,
@@ -108,8 +116,7 @@ class Procedures extends ChangeNotifier {
 
   Future<void> deleteProcedure(String id) async {
     if (id != null) {
-      final url =
-          'https://jmepro.firebaseio.com/procedures/$id.json';
+      final url = 'https://jmepro.firebaseio.com/procedures/$id.json';
       final existingProcedureIndex =
           _procedures.indexWhere((proc) => proc.id == id);
       var existingProcedure = _procedures[existingProcedureIndex];

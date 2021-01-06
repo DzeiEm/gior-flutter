@@ -1,11 +1,10 @@
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
-import 'package:gior/providers/profile.dart';
-import 'package:gior/model/user.dart';
-import 'package:gior/providers/auth.dart';
-import '../http/http_exeptions.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
+//
+import '../model/user.dart';
+import '../firebase/auth.dart';
+import '../http/http_exeptions.dart';
 
 enum LoginMode { Signup, Login }
 
@@ -25,8 +24,8 @@ class _LoginScreenState extends State<LoginScreen>
 
   LoginMode _loginMode = LoginMode.Login;
   var _isLoding = false;
-  Auth auth = Auth();
-  Profile profile = Profile();
+  var isLoggedIn;
+  Auth _auth = Auth();
   var _newUser =
       User(name: '', password: '', email: '', repassword: '', phone: null);
 
@@ -90,7 +89,6 @@ class _LoginScreenState extends State<LoginScreen>
   }
 
   Future<void> _submit() async {
-   
     if (!_formKey.currentState.validate()) {
       // when fails
       return;
@@ -103,13 +101,17 @@ class _LoginScreenState extends State<LoginScreen>
     try {
       if (_loginMode == LoginMode.Login) {
         //  login
-        auth.login(_newUser.email, _newUser.password);
+        _auth.login(_newUser.email, _newUser.password);
         FocusScope.of(context).unfocus();
       } else {
         // singup
-        auth.signUp(_newUser.email, _newUser.password);
-        profile.createProfile(_newUser.userId, _newUser.email, _newUser.name,
-            _newUser.phone, _newUser.role);
+        _auth.signUp(_newUser.email, _newUser.password);
+        _auth.createProfile(
+          _newUser.email,
+          _newUser.name,
+          _newUser.phone,
+          _newUser.role,
+        );
         FocusScope.of(context).unfocus();
       }
     } on HttpException catch (error) {
@@ -156,7 +158,7 @@ class _LoginScreenState extends State<LoginScreen>
       resizeToAvoidBottomInset: false,
       body: ModalProgressHUD(
         inAsyncCall: _isLoding,
-              child: Container(
+        child: Container(
           child: Stack(
             children: [
               Container(
@@ -197,7 +199,8 @@ class _LoginScreenState extends State<LoginScreen>
                               children: [
                                 TextFormField(
                                   // initialValue: _user['email'],
-                                  decoration: InputDecoration(hintText: 'email'),
+                                  decoration:
+                                      InputDecoration(hintText: 'email'),
                                   keyboardType: TextInputType.emailAddress,
                                   validator: (value) {
                                     if (value.isEmpty || !value.contains('@')) {
@@ -243,12 +246,14 @@ class _LoginScreenState extends State<LoginScreen>
                                 if (_loginMode == LoginMode.Signup)
                                   AnimatedContainer(
                                     constraints: BoxConstraints(
-                                        minHeight: _loginMode == LoginMode.Signup
-                                            ? 60
-                                            : 0,
-                                        maxHeight: _loginMode == LoginMode.Signup
-                                            ? 75
-                                            : 0),
+                                        minHeight:
+                                            _loginMode == LoginMode.Signup
+                                                ? 60
+                                                : 0,
+                                        maxHeight:
+                                            _loginMode == LoginMode.Signup
+                                                ? 80
+                                                : 0),
                                     duration: Duration(seconds: 1),
                                     child: FadeTransition(
                                       opacity: _opacityAnimation,
@@ -281,12 +286,14 @@ class _LoginScreenState extends State<LoginScreen>
                                   AnimatedContainer(
                                     curve: Curves.easeInOut,
                                     constraints: BoxConstraints(
-                                        minHeight: _loginMode == LoginMode.Signup
-                                            ? 60
-                                            : 0,
-                                        maxHeight: _loginMode == LoginMode.Signup
-                                            ? 75
-                                            : 0),
+                                        minHeight:
+                                            _loginMode == LoginMode.Signup
+                                                ? 60
+                                                : 0,
+                                        maxHeight:
+                                            _loginMode == LoginMode.Signup
+                                                ? 80
+                                                : 0),
                                     duration: Duration(seconds: 1),
                                     child: FadeTransition(
                                       opacity: _opacityAnimation,
@@ -297,7 +304,8 @@ class _LoginScreenState extends State<LoginScreen>
                                         keyboardType:
                                             TextInputType.visiblePassword,
                                         obscureText: true,
-                                        validator: _loginMode == LoginMode.Signup
+                                        validator: _loginMode ==
+                                                LoginMode.Signup
                                             ? (value) {
                                                 if (value !=
                                                     _passwordController.text) {
@@ -322,12 +330,14 @@ class _LoginScreenState extends State<LoginScreen>
                                   AnimatedContainer(
                                     curve: Curves.easeInOut,
                                     constraints: BoxConstraints(
-                                        minHeight: _loginMode == LoginMode.Signup
-                                            ? 60
-                                            : 0,
-                                        maxHeight: _loginMode == LoginMode.Signup
-                                            ? 75
-                                            : 0),
+                                        minHeight:
+                                            _loginMode == LoginMode.Signup
+                                                ? 60
+                                                : 0,
+                                        maxHeight:
+                                            _loginMode == LoginMode.Signup
+                                                ? 80
+                                                : 0),
                                     duration: Duration(seconds: 1),
                                     child: FadeTransition(
                                       opacity: _opacityAnimation,
@@ -372,9 +382,7 @@ class _LoginScreenState extends State<LoginScreen>
                                       ),
                                       color: Colors.blueGrey[800],
                                       splashColor: Colors.yellow,
-                                      onPressed: () {
-                                        _submit();
-                                      },
+                                      onPressed: _submit,
                                       child: Text(
                                         _loginMode == LoginMode.Login
                                             ? 'Login'

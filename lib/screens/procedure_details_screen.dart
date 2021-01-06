@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gior/providers/procedures.dart';
+import 'package:gior/providers/procedures_pr.dart';
 import 'package:gior/screens/calendar_screen.dart';
 import 'package:provider/provider.dart';
 

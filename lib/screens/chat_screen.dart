@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:gior/providers/auth.dart';
-import 'package:gior/providers/messages.dart';
-import 'package:gior/screens/settings.dart';
+import 'package:gior/firebase/auth.dart';
+import 'package:gior/providers/messages_pr.dart';
+import 'package:gior/screens/main%20_screens/settings.dart';
 
 final _firestore = FirebaseFirestore.instance;
 Auth auth = Auth();
@@ -47,7 +47,7 @@ class _ChatScreenState extends State<ChatScreen> {
         },
         child: Container(
           alignment: Alignment.center,
-          padding: EdgeInsets.only( left: 20, right: 20),
+          padding: EdgeInsets.only(left: 20, right: 20),
           child: SingleChildScrollView(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -58,6 +58,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 ),
                 SizedBox(height: 20),
                 MessageStream(),
+                SizedBox(height: 10),
                 Row(
                   children: [
                     Expanded(
@@ -72,7 +73,8 @@ class _ChatScreenState extends State<ChatScreen> {
                         decoration: InputDecoration(
                           enabled: true,
                           hintText: 'type here',
-                          hintStyle: TextStyle(color: Colors.yellow[50].withOpacity(0.7)),
+                          hintStyle: TextStyle(
+                              color: Colors.yellow[50].withOpacity(0.7)),
                         ),
                       ),
                     ),
@@ -101,7 +103,7 @@ class MessageStream extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 500,
+      height: 450,
       decoration: BoxDecoration(
         color: Colors.brown[300],
         borderRadius: BorderRadius.only(
@@ -117,7 +119,7 @@ class MessageStream extends StatelessWidget {
               ),
             );
           }
-          final messages = snapshot.data.docs;
+          final messages = snapshot.data.docs.reversed;
 
           List<MessageView> messageBubbles = [];
           for (var message in messages) {
@@ -136,7 +138,11 @@ class MessageStream extends StatelessWidget {
           }
           print('messagebubbles: $messageBubbles');
           return Expanded(
-              child: ListView(reverse: true, children: messageBubbles));
+              child: ListView(
+            reverse: true,
+            children: messageBubbles,
+            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+          ));
         },
       ),
     );

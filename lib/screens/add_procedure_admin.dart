@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gior/model/procedure.dart';
-import 'package:gior/providers/procedures.dart';
+import 'package:gior/providers/procedures_pr.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_picker/flutter_picker.dart';
 
@@ -368,9 +368,7 @@ class _AddProcedureScreenState extends State<AddProcedureScreen> {
                             ),
                           ),
                           validator: (value) {
-                            if (value.isEmpty) {
-                              return 'Name cannot be empty';
-                            }
+                            if (value.isEmpty) return 'Name cannot be empty';
                           },
                           onFieldSubmitted: (_) {
                             FocusScope.of(context)
@@ -412,9 +410,8 @@ class _AddProcedureScreenState extends State<AddProcedureScreen> {
                             ),
                           ),
                           validator: (value) {
-                            if (value.isEmpty) {
+                            if (value.isEmpty)
                               return 'Description cannot be empty';
-                            }
                           },
                           onFieldSubmitted: (_) {
                             FocusScope.of(context);

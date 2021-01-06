@@ -1,11 +1,18 @@
 class User {
-  String userId;
-  String email;
-  String name;
-  String password;
-  String repassword;
-  int phone;
-  int role;
+  final String userId;
+  final String email;
+  final String name;
+  final String password;
+  final String repassword;
+  final int phone;
+  final int role;
 
-  User({this.name, this.email, this.password, this.repassword, this.phone, this.role});
+  User(
+      {this.userId,
+      this.email,
+      this.name,
+      this.password,
+      this.repassword,
+      this.phone,
+      this.role});
 }
