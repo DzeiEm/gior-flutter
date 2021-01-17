@@ -2,7 +2,7 @@ import 'package:sqflite/sqflite.dart' as db;
 import 'package:path/path.dart' as path;
 import 'package:sqflite/sqlite_api.dart';
 
-class Mobdb {
+class GalleryImageDB {
   static Future<db.Database> database() async {
     final dbPath = await db.getDatabasesPath(); // kur bus saugoma
     return db.openDatabase(path.join(dbPath, 'galleryImages.db'), onCreate: (
@@ -15,12 +15,12 @@ class Mobdb {
   }
 
   static Future<void> insert(String table, Map<String, Object> data) async {
-    final db = await Mobdb.database();
+    final db = await GalleryImageDB.database();
     db.insert(table, data, conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
   static Future<List<Map<String, dynamic>>> fetchData(String table) async {
-    final db = await Mobdb.database();
+    final db = await GalleryImageDB.database();
     return db.query(table);
   }
 }

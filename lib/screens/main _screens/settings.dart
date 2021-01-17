@@ -31,7 +31,9 @@ class SettingsScreen extends StatelessWidget {
                 size: 30,
                 color: Colors.red[300],
               ),
-              onPressed: _auth.autoLogin,),
+              onPressed: () {
+                _auth.logOut();
+              },),
         ],
       ),
       body: Container(

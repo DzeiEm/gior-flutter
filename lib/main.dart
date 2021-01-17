@@ -6,22 +6,22 @@ import 'package:gior/providers/events_pr.dart';
 import 'package:gior/providers/gallery_images_pr.dart';
 import 'package:gior/providers/procedures_pr.dart';
 import 'package:gior/screens/add_image_screen.dart';
-import 'package:gior/screens/image_details_screen.dart';
-import 'package:provider/provider.dart';
 import 'package:gior/screens/add_procedure_admin.dart';
 import 'package:gior/screens/calendar_screen.dart';
 import 'package:gior/screens/chat_screen.dart';
 import 'package:gior/screens/contacts_screen.dart';
-import 'package:gior/screens/location_screen.dart';
-import 'package:gior/screens/profile_screen.dart';
 import 'package:gior/screens/deal_screen.dart';
 import 'package:gior/screens/gallery_screen.dart';
-import 'package:gior/screens/main%20_screens/home_screen.dart';
+import 'package:gior/screens/image_details_screen.dart';
+import 'package:gior/screens/location_screen.dart';
 import 'package:gior/screens/login_screen.dart';
-import 'package:gior/screens/procedure_details_screen.dart';
+import 'package:gior/screens/main%20_screens/home_screen.dart';
 import 'package:gior/screens/main%20_screens/procedure_list_screen.dart';
 import 'package:gior/screens/main%20_screens/settings.dart';
+import 'package:gior/screens/procedure_details_screen.dart';
+import 'package:gior/screens/profile_screen.dart';
 import 'package:gior/screens/splash_screen.dart';
+import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -36,10 +36,8 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => Auth()),
         ChangeNotifierProvider(create: (_) => Procedures()),
-        ChangeNotifierProvider(
-          create: (_) => Events(),
-        ),
-        ChangeNotifierProvider(create: (_) => ImagesProvider())
+        ChangeNotifierProvider(create: (_) => Events()),
+        ChangeNotifierProvider(create: (_) => ImagesProvider()),
       ],
       child: MaterialApp(
         title: 'Gior',
@@ -47,18 +45,18 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
-        home: FutureBuilder<User>(
-          future: auth.getUser(),
-          builder: (context, snapshot) {
-            switch (snapshot.connectionState) {
+        home: StreamBuilder<User>(
+          stream: FirebaseAuth.instance.authStateChanges(),
+          builder: (context, userSnapshot) {
+            switch (userSnapshot.connectionState) {
               case ConnectionState.none:
               case ConnectionState.waiting:
                 return SplashScreen();
               default:
-                if (snapshot.hasError)
-                  return Text('Error: ${snapshot.error}');
+                if (userSnapshot.hasError)
+                  return Text('Error: ${userSnapshot.error}');
                 else {
-                  if (snapshot.data == null) {
+                  if (userSnapshot.data == null) {
                     return LoginScreen();
                   } else {
                     return PageView(children: [

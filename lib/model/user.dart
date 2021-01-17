@@ -1,3 +1,5 @@
+import 'dart:io';
+
 class User {
   final String userId;
   final String email;
@@ -6,6 +8,7 @@ class User {
   final String repassword;
   final int phone;
   final int role;
+  final File profileImage;
 
   User(
       {this.userId,
@@ -14,5 +17,6 @@ class User {
       this.password,
       this.repassword,
       this.phone,
-      this.role});
+      this.role,
+      this.profileImage});
 }

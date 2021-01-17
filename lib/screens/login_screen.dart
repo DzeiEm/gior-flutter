@@ -105,13 +105,14 @@ class _LoginScreenState extends State<LoginScreen>
         FocusScope.of(context).unfocus();
       } else {
         // singup
-        _auth.signUp(_newUser.email, _newUser.password);
-        _auth.createProfile(
-          _newUser.email,
-          _newUser.name,
-          _newUser.phone,
-          _newUser.role,
-        );
+        _auth.signUp(_newUser.email, _newUser.password, _newUser.name, _newUser.phone, _newUser
+        .role);
+        // _auth.createProfile(
+        //   _newUser.email,
+        //   _newUser.name,
+        //   _newUser.phone,
+        //   _newUser.role,
+        // );
         FocusScope.of(context).unfocus();
       }
     } on HttpException catch (error) {
@@ -211,7 +212,7 @@ class _LoginScreenState extends State<LoginScreen>
                                   onSaved: (value) {
                                     print('email: $value');
                                     _newUser = User(
-                                        email: value,
+                                        email: value.trim(),
                                         name: _newUser.name,
                                         password: _newUser.password,
                                         repassword: _newUser.repassword,
@@ -236,7 +237,7 @@ class _LoginScreenState extends State<LoginScreen>
                                     _newUser = User(
                                       email: _newUser.email,
                                       name: _newUser.name,
-                                      password: value,
+                                      password: value.trim(),
                                       repassword: _newUser.repassword,
                                       phone: _newUser.phone,
                                     );
@@ -273,7 +274,7 @@ class _LoginScreenState extends State<LoginScreen>
                                           print('name: $value');
                                           _newUser = User(
                                             email: _newUser.email,
-                                            name: value,
+                                            name: value.trim(),
                                             password: _newUser.password,
                                             repassword: _newUser.repassword,
                                             phone: _newUser.phone,
@@ -319,7 +320,7 @@ class _LoginScreenState extends State<LoginScreen>
                                             email: _newUser.email,
                                             name: _newUser.name,
                                             password: _newUser.password,
-                                            repassword: value,
+                                            repassword: value.trim(),
                                             phone: _newUser.phone,
                                           );
                                         },

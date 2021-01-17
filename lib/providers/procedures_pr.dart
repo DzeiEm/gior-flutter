@@ -23,73 +23,78 @@ class Procedures extends ChangeNotifier {
   }
 
   Future<void> fetchAndSetProceduresData([bool filterByUser = false]) async {
+    await _firestore.collection('procedures').get();
+
     // final filterString =
     //     filterByUser ? 'orderBy="creatorId"equalTo="$userId"' : '';
 
-    final url = 'https://jmepro.firebaseio.com/procedures.json';
-    try {
-      final response = await http.get(url);
-      final extractedData = json.decode(response.body) as Map<String, dynamic>;
-      final List<Procedure> loadedProcedures = [];
-      extractedData.forEach((prodId, procData) {
-        loadedProcedures.add(
-          Procedure(
-            id: prodId,
-            title: procData['title'],
-            description: procData['description'],
-            pType: procData['proType'],
-            price: procData['price'],
-            duration: procData['duration'],
-          ),
-        );
-      });
-      _procedures = loadedProcedures;
-      print(json.decode(response.body));
-    } catch (error) {
-      print(error);
-      // throw error;
-    }
+    // final url = 'https://jmepro.firebaseio.com/procedures.json';
+    // try {
+    //   final response = await http.get(url);
+    //   final extractedData = json.decode(response.body) as Map<String, dynamic>;
+    //   final List<Procedure> loadedProcedures = [];
+    //   extractedData.forEach((prodId, procData) {
+    //     loadedProcedures.add(
+    //       Procedure(
+    //         id: prodId,
+    //         title: procData['title'],
+    //         description: procData['description'],
+    //         pType: procData['proType'],
+    //         price: procData['price'],
+    //         duration: procData['duration'],
+    //       ),
+    //     );
+    //   });
+    //   _procedures = loadedProcedures;
+    //   print(json.decode(response.body));
+    // } catch (error) {
+    //   print(error);
+    //   // throw error;
+    // }
   }
 
   Future<void> addProcedure(Procedure newProcedure) async {
-    await _firestore.collection('procedures').add({
-      'id': newProcedure.id,
+    _firestore.collection('procedures').add({
+      'proID': newProcedure.id,
       'title': newProcedure.title,
       'description': newProcedure.description,
       'price': newProcedure.price,
+      'proType': newProcedure.pType,
+      'duration': newProcedure.duration
     });
+    notifyListeners();
 
-    final url = 'https://jmepro.firebaseio.com/procedures.json';
-    try {
-      final response = await http.post(
-        url,
-        body: json.encode({
-          'id': newProcedure.id,
-          'title': newProcedure.title,
-          'description': newProcedure.description,
-          // 'proType': newProcedure.pType, String;as turi buti
-          'price': newProcedure.price,
-          // 'duration': newProcedure.duration, Sttringas turi buti
-          // 'creatorId': userId,
-        }),
-      );
-      // pridedu i local
-      final newAddedProcedure = Procedure(
-          id: json.decode(response.body)['name'],
-          title: newProcedure.title,
-          price: newProcedure.price,
-          pType: newProcedure.pType,
-          description: newProcedure.description,
-          duration: newProcedure.duration);
+    // final url = 'https://jmepro.firebaseio.com/procedures.json';
+    // try {
+    //   final response = await http.post(
+    //     url,
+    //     body: json.encode({
+    //       'id': newProcedure.id,
+    //       'title': newProcedure.title,
+    //       'description': newProcedure.description,
+    //       // 'proType': newProcedure.pType, String;as turi buti
+    //       'price': newProcedure.price,
+    //       // 'duration': newProcedure.duration, Sttringas turi buti
+    //       // 'creatorId': userId,
+    //     }),
+    //   );
+    //   // pridedu i local
+    //   final newAddedProcedure = Procedure(
+    //       id: json.decode(response.body)['name'],
+    //       title: newProcedure.title,
+    //       price: newProcedure.price,
+    //       pType: newProcedure.pType,
+    //       description: newProcedure.description,
+    //       duration: newProcedure.duration);
 
-      _procedures.add(newAddedProcedure); // i gala
-      // _procedures.insert(0, newProcedure); i pradzia
-      print('procedure has  been added');
-      notifyListeners();
-    } catch (error) {
-      print(error);
-      throw error;
-    }
+    //   _procedures.add(newAddedProcedure); // i gala
+    //   // _procedures.insert(0, newProcedure); i pradzia
+    //   print('procedure has  been added');
+    //   notifyListeners();
+    // } catch (error) {
+    //   print(error);
+    //   throw error;
+    // }
   }
 
   Future<void> editProcedure(String id, Procedure editedProcedure) async {

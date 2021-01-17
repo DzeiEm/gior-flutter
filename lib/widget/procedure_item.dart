@@ -3,28 +3,27 @@ import 'package:gior/model/procedure.dart';
 import 'package:gior/screens/procedure_details_screen.dart';
 
 class ProcedureItem extends StatefulWidget {
-  String id;
-  String title;
-  String description;
-  ProcedureType pType;
-  String price;
-  Duration duration;
+  final String id;
+  final String title;
+  final String description;
+  final ProcedureType pType;
+  final String price;
+  final Duration duration;
 
-  ProcedureItem(this.id, this.title, this.description, this.pType, this.price,
-      this.duration);
+  ProcedureItem({
+    this.id,
+    this.title,
+    this.description,
+    this.pType,
+    this.price,
+    this.duration,
+  });
 
   @override
   _ProcedureItemState createState() => _ProcedureItemState();
 }
 
 class _ProcedureItemState extends State<ProcedureItem> {
-  var ifAdmin = false;
-  var _isEdit = false;
-
-  void _requestUpdateFromAdmin() {}
-
-  void _expandDetails() {}
-
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -34,10 +33,10 @@ class _ProcedureItemState extends State<ProcedureItem> {
           Navigator.of(context).pushNamed(ProcedureDetailsScreen.routeName,
               arguments: widget.id);
         },
-        onLongPress: ifAdmin ? _requestUpdateFromAdmin : _expandDetails,
         child: Stack(
           alignment: Alignment.bottomRight,
           children: [
+            // add image to the procedure
             Card(
               child: Image.asset('assets/images/lem.jpg'),
             ),

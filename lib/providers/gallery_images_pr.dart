@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
-import 'package:gior/db/mob_db.dart';
+import 'package:gior/db/gallery_image_db.dart';
 import 'package:gior/model/image_mo.dart';
 
 class ImagesProvider with ChangeNotifier {
@@ -20,7 +20,7 @@ class ImagesProvider with ChangeNotifier {
     _images.add(newImage);
     print(_images);
     notifyListeners();
-    Mobdb.insert('gallery_images', {
+    GalleryImageDB.insert('gallery_images', {
       'id': newImage.id,
       'title': newImage.title,
       'image': newImage.image.path
@@ -28,7 +28,7 @@ class ImagesProvider with ChangeNotifier {
   }
 
   Future<void> fetchAndSetGalleryImages() async {
-    final dataList = await Mobdb.fetchData('gallery_images');
+    final dataList = await GalleryImageDB.fetchData('gallery_images');
     _images = dataList
         .map((image) => ImageMo(
               id: image['id'],

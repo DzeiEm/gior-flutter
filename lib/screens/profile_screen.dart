@@ -1,7 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-//
-import 'main _screens/settings.dart';
-import '../firebase/auth.dart';
+import 'package:gior/firebase/auth.dart';
+
+final _firestore = FirebaseFirestore.instance;
 
 class ProfileScreen extends StatefulWidget {
   static const routeName = '/profile-screen';
@@ -11,12 +12,10 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  final Auth _auth = Auth();
-
-  @override
-  void initState() {
-    _auth.getUser();
-    super.initState();
+  Auth _auth = Auth();
+  Future<DocumentSnapshot> getData() async {
+    final user = await _auth.getUser();
+    return FirebaseFirestore.instance.collection('users').doc(user.uid).get();
   }
 
   @override
@@ -30,108 +29,112 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Icons.arrow_back_ios_sharp,
             color: Colors.yellow[50],
           ),
-          onPressed: () => Navigator.of(context).pop(SettingsScreen.routeName),
+          onPressed: () => Navigator.of(context).pop(),
         ),
       ),
       body: Padding(
         padding: const EdgeInsets.only(left: 20, right: 20, bottom: 100),
         child: FutureBuilder(
-          future: _auth.getUserProfileData(),
-          builder: (BuildContext ctx, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting ||
-                snapshot.connectionState == ConnectionState.none)
-              return Center(
-                child: CircularProgressIndicator(
-                  value: 100,
-                  strokeWidth: 3,
-                  backgroundColor: Colors.blueGrey,
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.yellow),
+            future: getData(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+              return Padding(
+                padding: const EdgeInsets.only(top: 30),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Expanded(
+                      flex: 3,
+                      child: Column(
+                        children: [
+                          Text(
+                            'My profile',
+                            style: TextStyle(
+                                fontSize: 28, color: Colors.yellow[50]),
+                          ),
+                          SizedBox(height: 20),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Stack(
+                                alignment: Alignment.bottomRight,
+                                children: [
+                                  CircleAvatar(
+                                    radius: 100,
+                                    backgroundColor: Colors.yellow[50],
+                                  ),
+                                  FloatingActionButton(
+                                      backgroundColor: Colors.blueGrey[800],
+                                      hoverElevation: 6,
+                                      tooltip: 'Add image',
+                                      child: Icon(
+                                        Icons.add,
+                                      ),
+                                      onPressed: () {
+                                        // Add image
+                                        print('profile image added');
+                                      }),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Name:',
+                                style: TextStyle(
+                                    color: Colors.yellow[50], fontSize: 22),
+                              ),
+                              Text(snapshot.data['name'],
+                                  style: TextStyle(
+                                      color: Colors.pink[100], fontSize: 18,fontStyle: FontStyle.italic)),
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Email:',
+                                style: TextStyle(
+                                    color: Colors.yellow[50], fontSize: 22),
+                              ),
+                              Text(snapshot.data['email'],
+                                  style: TextStyle(
+                                      color: Colors.pink[100], fontSize: 18,fontStyle: FontStyle.italic)),
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Phone:',
+                                style: TextStyle(
+                                    color: Colors.yellow[50], fontSize: 22),
+                              ),
+                              Text(snapshot.data['phone'].toString(),
+                                  style: TextStyle(
+                                      color: Colors.pink[100], fontSize: 18, fontStyle: FontStyle.italic)),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               );
-
-            if (snapshot.connectionState == ConnectionState.done) {
-              Map<String, dynamic> data = snapshot.data.data();
-              print('SNAPSHOT DATA: $snapshot.data');
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Text(
-                    'My profile',
-                    style: TextStyle(fontSize: 28, color: Colors.yellow[50]),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Stack(
-                        alignment: Alignment.bottomRight,
-                        children: [
-                          CircleAvatar(
-                            radius: 100,
-                            backgroundColor: Colors.yellow[50],
-                          ),
-                          FloatingActionButton(
-                              backgroundColor: Colors.blueGrey[800],
-                              hoverElevation: 6,
-                              tooltip: 'Add image',
-                              child: Icon(
-                                Icons.add,
-                              ),
-                              onPressed: () {
-                                // Add image
-                                print('profile image added');
-                              }),
-                        ],
-                      ),
-                    ],
-                  ),
-                  Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'Name:',
-                            style: TextStyle(
-                                color: Colors.yellow[50], fontSize: 26),
-                          ),
-                          Text(data['name'],
-                              style: TextStyle(
-                                  color: Colors.yellow[50], fontSize: 26)),
-                        ],
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'Email:',
-                            style: TextStyle(
-                                color: Colors.yellow[50], fontSize: 26),
-                          ),
-                          Text(data['email'],
-                              style: TextStyle(
-                                  color: Colors.yellow[50], fontSize: 26)),
-                        ],
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'Phone:',
-                            style: TextStyle(
-                                color: Colors.yellow[50], fontSize: 26),
-                          ),
-                          Text(data['phone'],
-                              style: TextStyle(
-                                  color: Colors.yellow[50], fontSize: 26)),
-                        ],
-                      ),
-                    ],
-                  ),
-                ],
-              );
-            }
-          },
-        ),
+            }),
       ),
     );
   }

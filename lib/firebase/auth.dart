@@ -1,11 +1,17 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import '../model/user.dart' as us;
 import 'dart:async';
-
 
 class Auth with ChangeNotifier {
   final _firestore = FirebaseFirestore.instance;
+  UserCredential _userInfo;
+  UserCredential get userInfo {
+    return _userInfo;
+  }
 
   User _loggedInUser;
 
@@ -13,6 +19,9 @@ class Auth with ChangeNotifier {
     return _loggedInUser;
   }
 
+  us.User _userFromFb(User user) {
+    return user != null ? us.User(userId: _loggedInUser.uid) : null;
+  }
   // umodel.User _userFromFirebase(User user) {
   //   return user != null ? umodel.User(userId: user.uid) : null;
   // }
@@ -21,9 +30,10 @@ class Auth with ChangeNotifier {
     User _user = FirebaseAuth.instance.currentUser;
 
     if (_user != null) {
-      print('user  information: ' + _user.toString());
+      print('LOGGED USER INFO: ==> ' + _user.toString());
       _loggedInUser = _user;
-      return _user;
+      print('LOGGED USER UID : ${_loggedInUser.uid}');
+      return _loggedInUser;
     } else {
       return null;
     }
@@ -35,10 +45,15 @@ class Auth with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> signUp(String email, String password) async {
+  Future<void> signUp(
+      String email, String password, String name, int phone, int role) async {
+    UserCredential _singUpauthResult;
     try {
-      await FirebaseAuth.instance
+      _singUpauthResult = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: email, password: password);
+      createProfile(email, name, phone, role, _singUpauthResult);
+      _userInfo = _singUpauthResult;
+      print('AUTH RESULT===> $_singUpauthResult');
     } catch (err) {
       print(err.toString());
     }
@@ -49,23 +64,25 @@ class Auth with ChangeNotifier {
 
   Future<void> logOut() async {
     await FirebaseAuth.instance.signOut();
-    // notifyListeners();
+    print('USER LOGGED OUT');
+    notifyListeners();
   }
 
   Future<void> autoLogin() async {
     notifyListeners();
   }
 
-  Future<void> createProfile(
-      String email, String name, int phone, int role) async {
+  Future<void> createProfile(String email, String name, int phone, int role,
+      UserCredential singUpauthResult) async {
     final userId = DateTime.now().toIso8601String();
+
     if (email == 'admin@admin.com') {
       role = 1;
     } else {
       role = 0;
     }
     try {
-      await _firestore.collection('users').add({
+      await _firestore.collection('users').doc(singUpauthResult.user.uid).set({
         'user': userId,
         'email': email,
         'name': name,
@@ -78,17 +95,5 @@ class Auth with ChangeNotifier {
     } catch (error) {
       print(error);
     }
-  }
-
-  Future<void> getUserProfileData() async {
-    await _firestore.collection('users').doc().get();
-  }
-
-  Future updataUserProfile([String name, int phone, String email]) async {
-    return await _firestore.collection('users').doc(_loggedInUser.uid).update({
-      'name': name,
-      'phone': phone,
-      'email': email,
-    });
   }
 }

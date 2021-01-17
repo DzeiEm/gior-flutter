@@ -108,27 +108,20 @@ class _AddProcedureScreenState extends State<AddProcedureScreen> {
             .addProcedure(_newProcedure);
       } catch (error) {
         await showDialog(
-            context: context,
-            builder: (ctx) => AlertDialog(
-                  title: Text('Error'),
-                  content: Text('Sommething went wrong'),
-                  actions: [
-                    FlatButton(
-                      child: Text('ok'),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                  ],
-                ));
-        // } finally {
-        //   // sitas blokas runnina nepriklausomai ar buvo erroras koks ar nea
-        //   setState(() {
-        //     _isLoading = false;
-        //   });
-        //   Navigator.of(context).pop();
-        // }
-
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: Text('Error'),
+            content: Text('Sommething went wrong'),
+            actions: [
+              FlatButton(
+                child: Text('ok'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          ),
+        );
       }
       setState(() {
         _isLoading = false;
@@ -337,265 +330,297 @@ class _AddProcedureScreenState extends State<AddProcedureScreen> {
           : Padding(
               padding: const EdgeInsets.only(
                   top: 30, left: 10, right: 10, bottom: 10),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Form(
-                    key: _formKey,
-                    child: Column(
-                      children: [
-                        TextFormField(
-                          initialValue: _editedProcedure['title'],
-                          textInputAction: TextInputAction.next,
-                          cursorColor: Colors.yellow[100],
-                          style: TextStyle(color: Colors.yellow[100]),
-                          decoration: InputDecoration(
-                            hintText: 'Procedure title',
-                            fillColor: Colors.yellow[50],
-                            enabledBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Colors.yellow[50],
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Form(
+                      key: _formKey,
+                      child: Column(
+                        children: [
+                          TextFormField(
+                            initialValue: _editedProcedure['title'],
+                            textInputAction: TextInputAction.next,
+                            cursorColor: Colors.yellow[100],
+                            style: TextStyle(color: Colors.yellow[100]),
+                            decoration: InputDecoration(
+                              hintText: 'Procedure title',
+                              fillColor: Colors.yellow[50],
+                              enabledBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Colors.yellow[50],
+                                ),
+                              ),
+                              focusedBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Colors.green,
+                                  width: 2,
+                                ),
+                              ),
+                              hintStyle: TextStyle(
+                                color: Colors.blueGrey[400],
                               ),
                             ),
-                            focusedBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Colors.green,
-                                width: 2,
-                              ),
-                            ),
-                            hintStyle: TextStyle(
-                              color: Colors.blueGrey[400],
-                            ),
+                            validator: (value) {
+                              if (value.isEmpty) return 'Name cannot be empty';
+                            },
+                            onFieldSubmitted: (_) {
+                              FocusScope.of(context)
+                                  .requestFocus(_descriptionFocusNode);
+                            },
+                            onSaved: (value) {
+                              _newProcedure = Procedure(
+                                  id: _newProcedure.id,
+                                  title: value,
+                                  description: _newProcedure.description,
+                                  pType: _newProcedure.pType,
+                                  duration: _newProcedure.duration,
+                                  price: _newProcedure.price);
+                            },
                           ),
-                          validator: (value) {
-                            if (value.isEmpty) return 'Name cannot be empty';
-                          },
-                          onFieldSubmitted: (_) {
-                            FocusScope.of(context)
-                                .requestFocus(_descriptionFocusNode);
-                          },
-                          onSaved: (value) {
-                            _newProcedure = Procedure(
-                                id: _newProcedure.id,
-                                title: value,
-                                description: _newProcedure.description,
-                                pType: _newProcedure.pType,
-                                duration: _newProcedure.duration,
-                                price: _newProcedure.price);
-                          },
-                        ),
-                        TextFormField(
-                          initialValue: _editedProcedure['description'],
-                          maxLines: 5,
-                          focusNode: _descriptionFocusNode,
-                          textInputAction: TextInputAction.next,
-                          style: TextStyle(color: Colors.yellow[100]),
-                          cursorColor: Colors.yellow[100],
-                          decoration: InputDecoration(
-                            hintText: 'Description',
-                            fillColor: Colors.yellow[50],
-                            hintStyle: TextStyle(
-                              color: Colors.blueGrey[400],
-                            ),
-                            enabledBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Colors.yellow[50],
+                          TextFormField(
+                            initialValue: _editedProcedure['description'],
+                            maxLines: 5,
+                            focusNode: _descriptionFocusNode,
+                            textInputAction: TextInputAction.next,
+                            style: TextStyle(color: Colors.yellow[100]),
+                            cursorColor: Colors.yellow[100],
+                            decoration: InputDecoration(
+                              hintText: 'Description',
+                              fillColor: Colors.yellow[50],
+                              hintStyle: TextStyle(
+                                color: Colors.blueGrey[400],
+                              ),
+                              enabledBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Colors.yellow[50],
+                                ),
+                              ),
+                              focusedBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Colors.green,
+                                  width: 2,
+                                ),
                               ),
                             ),
-                            focusedBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Colors.green,
-                                width: 2,
-                              ),
-                            ),
+                            validator: (value) {
+                              if (value.isEmpty)
+                                return 'Description cannot be empty';
+                            },
+                            onFieldSubmitted: (_) {
+                              FocusScope.of(context);
+                            },
+                            onSaved: (value) {
+                              _newProcedure = Procedure(
+                                  id: _newProcedure.id,
+                                  title: _newProcedure.title,
+                                  description: value,
+                                  pType: _newProcedure.pType,
+                                  duration: _newProcedure.duration,
+                                  price: _newProcedure.price);
+                            },
                           ),
-                          validator: (value) {
-                            if (value.isEmpty)
-                              return 'Description cannot be empty';
-                          },
-                          onFieldSubmitted: (_) {
-                            FocusScope.of(context);
-                          },
-                          onSaved: (value) {
-                            _newProcedure = Procedure(
-                                id: _newProcedure.id,
-                                title: _newProcedure.title,
-                                description: value,
-                                pType: _newProcedure.pType,
-                                duration: _newProcedure.duration,
-                                price: _newProcedure.price);
-                          },
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                  SizedBox(height: 10),
-                  Container(
-                    height: 50,
-                    child: InkWell(
-                      splashColor: Colors.yellow[50],
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    SizedBox(height: 10),
+                    Container(
+                      height: 50,
+                      child: InkWell(
+                        splashColor: Colors.yellow[50],
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Container(
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.arrow_back_rounded,
+                                    color: Colors.yellow[100],
+                                  ),
+                                  Text(
+                                    'Type',
+                                    style: TextStyle(color: Colors.white70),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Text(
+                              _selectedProTypeItem == null
+                                  ? 'not set'
+                                  : proTypes[_selectedProTypeItem],
+                              style: TextStyle(
+                                color: Colors.white70,
+                              ),
+                            ),
+                          ],
+                        ),
+                        onTap: () {
+                          showProcedureTypeBottomSheet();
+                        },
+                      ),
+                    ),
+                    Container(
+                      // padding: EdgeInsets.only(top: 30),
+                      child: Column(
                         children: [
                           Container(
-                            child: Row(
-                              children: [
-                                Icon(
-                                  Icons.arrow_back_rounded,
-                                  color: Colors.yellow[100],
-                                ),
-                                Text(
-                                  'Type',
-                                  style: TextStyle(color: Colors.white70),
-                                ),
-                              ],
+                            height: 50,
+                            child: InkWell(
+                              splashColor: Colors.yellow[50],
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Container(
+                                    child: Row(
+                                      children: [
+                                        Icon(
+                                          Icons.money_off_csred_outlined,
+                                          color: Colors.yellow[100],
+                                        ),
+                                        Text(
+                                          'Price',
+                                          style:
+                                              TextStyle(color: Colors.white70),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Row(
+                                    children: [
+                                      Text(
+                                        (_selectedPrice == null)
+                                            ? '0.0'
+                                            : _selectedPrice,
+                                        style: TextStyle(
+                                          color: Colors.white70,
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 2,
+                                      ),
+                                      Text(
+                                        'Eur',
+                                        style: TextStyle(
+                                          color: Colors.white70,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+
+                                  // Add scrollContenta to pick a price
+                                ],
+                              ),
+                              onTap: () {
+                                showPriceBottomSheet();
+                              },
                             ),
                           ),
-                          Text(
-                            _selectedProTypeItem == null
-                                ? 'not set'
-                                : proTypes[_selectedProTypeItem],
-                            style: TextStyle(
-                              color: Colors.white70,
+                          Container(
+                            height: 50,
+                            child: InkWell(
+                              splashColor: Colors.yellow[50],
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Container(
+                                    child: Row(
+                                      children: [
+                                        Icon(
+                                          Icons.lock_clock,
+                                          color: Colors.yellow[100],
+                                        ),
+                                        Text(
+                                          'Duration',
+                                          style:
+                                              TextStyle(color: Colors.white70),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Row(
+                                    children: [
+                                      Text(
+                                        _selectedDurationTime == null
+                                            ? '0.0'
+                                            : _selectedDurationTime.toString(),
+                                        style: TextStyle(
+                                          color: Colors.white70,
+                                        ),
+                                      ),
+                                      Text(
+                                        'h',
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                          color: Colors.white70,
+                                        ),
+                                      ),
+                                    ],
+                                  )
+                                ],
+                              ),
+                              onTap: () {
+                                showDurationBottomSheet();
+                              },
                             ),
                           ),
                         ],
                       ),
-                      onTap: () {
-                        showProcedureTypeBottomSheet();
-                      },
                     ),
-                  ),
-                  Container(
-                    // padding: EdgeInsets.only(top: 30),
-                    child: Column(
+                    Stack(
                       children: [
                         Container(
-                          height: 50,
-                          child: InkWell(
-                            splashColor: Colors.yellow[50],
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Container(
-                                  child: Row(
-                                    children: [
-                                      Icon(
-                                        Icons.money_off_csred_outlined,
-                                        color: Colors.yellow[100],
-                                      ),
-                                      Text(
-                                        'Price',
-                                        style: TextStyle(color: Colors.white70),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Row(
-                                  children: [
-                                    Text(
-                                      (_selectedPrice == null)
-                                          ? '0.0'
-                                          : _selectedPrice,
-                                      style: TextStyle(
-                                        color: Colors.white70,
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: 2,
-                                    ),
-                                    Text(
-                                      'Eur',
-                                      style: TextStyle(
-                                        color: Colors.white70,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-
-                                // Add scrollContenta to pick a price
-                              ],
-                            ),
-                            onTap: () {
-                              showPriceBottomSheet();
-                            },
+                          width: 320,
+                          height: 200,
+                          color: Colors.yellow[50],
+                          child: Icon(
+                            Icons.mood,
+                            size: 170,
                           ),
                         ),
-                        Container(
-                          height: 50,
-                          child: InkWell(
-                            splashColor: Colors.yellow[50],
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Container(
-                                  child: Row(
-                                    children: [
-                                      Icon(
-                                        Icons.lock_clock,
-                                        color: Colors.yellow[100],
-                                      ),
-                                      Text(
-                                        'Duration',
-                                        style: TextStyle(color: Colors.white70),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Row(
-                                  children: [
-                                    Text(
-                                      _selectedDurationTime == null
-                                          ? '0.0'
-                                          : _selectedDurationTime.toString(),
-                                      style: TextStyle(
-                                        color: Colors.white70,
-                                      ),
-                                    ),
-                                    Text(
-                                      'h',
-                                      style: TextStyle(
-                                        fontSize: 20,
-                                        color: Colors.white70,
-                                      ),
-                                    ),
-                                  ],
-                                )
-                              ],
-                            ),
-                            onTap: () {
-                              showDurationBottomSheet();
-                            },
+                        FloatingActionButton(
+                          backgroundColor: Colors.yellow,
+                          child: Icon(
+                            Icons.add,
+                            color: Colors.blueGrey,
+                            size: 20,
                           ),
+                          splashColor: Colors.purple,
+                          onPressed: () {
+                            // add image
+                          },
                         ),
                       ],
                     ),
-                  ),
-                  SizedBox(
-                    height: 100,
-                  ),
-                  Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(30),
-                        topRight: Radius.circular(30),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Container(
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(30),
+                          topRight: Radius.circular(30),
+                        ),
+                      ),
+                      child: FlatButton(
+                        height: 70,
+                        color: Colors.yellow[50],
+                        splashColor: Colors.teal,
+                        child: Text(
+                          'Add it',
+                          style:
+                              TextStyle(color: Colors.blueGrey, fontSize: 18),
+                        ),
+                        onPressed: () {
+                          _saveForm();
+                        },
                       ),
                     ),
-                    child: FlatButton(
-                      height: 70,
-                      color: Colors.yellow[50],
-                      splashColor: Colors.teal,
-                      child: Text(
-                        'Add it',
-                        style: TextStyle(color: Colors.blueGrey, fontSize: 18),
-                      ),
-                      onPressed: () {
-                        _saveForm();
-                      },
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
     );

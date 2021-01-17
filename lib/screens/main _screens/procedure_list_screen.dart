@@ -1,7 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:gior/providers/procedures_pr.dart';
 import 'package:gior/screens/add_procedure_admin.dart';
-import 'package:gior/widget/procedure_list.dart';
+import 'package:gior/screens/procedure_details_screen.dart';
+import 'package:gior/widget/procedure_item.dart';
 import 'package:provider/provider.dart';
 
 class ProcedureListScreen extends StatefulWidget {
@@ -84,81 +87,96 @@ class _ProcedureListScreenState extends State<ProcedureListScreen> {
           style: TextStyle(color: Colors.white, fontSize: 28),
         ),
       ),
-      body: Container(
-        color: Colors.blueGrey[900],
-        child: Padding(
-          padding:
-              const EdgeInsets.only(top: 20, bottom: 20, left: 2, right: 2),
-          child: ifAdmin && prodList.length == 0
-              ? Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
+      body: StreamBuilder(
+        stream: FirebaseFirestore.instance.collection('procedures').snapshots(),
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (!snapshot.hasData) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'No procedures yet',
+                  style: TextStyle(fontSize: 20, color: Colors.white),
+                ),
+                Text(
+                  'Add it :)',
+                  style: TextStyle(fontSize: 16, color: Colors.white),
+                ),
+                SizedBox(
+                  height: 100,
+                ),
+                Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
-                      'No procedures yet',
-                      style: TextStyle(fontSize: 20, color: Colors.white),
-                    ),
-                    Text(
-                      'Add it :)',
-                      style: TextStyle(fontSize: 16, color: Colors.white),
-                    ),
-                    SizedBox(
-                      height: 100,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        FlatButton(
-                          color: Colors.white12,
-                          child: Text(
-                            'Add procedure',
-                            style: TextStyle(fontSize: 18, color: Colors.white),
-                          ),
-                          onPressed: () {
-                            Navigator.of(context)
-                                .pushNamed(AddProcedureScreen.routeName);
-                          },
-                        ),
-                      ],
+                    FlatButton(
+                      color: Colors.white12,
+                      child: Text(
+                        'Add procedure',
+                        style: TextStyle(fontSize: 18, color: Colors.white),
+                      ),
+                      onPressed: () {
+                        Navigator.of(context)
+                            .pushNamed(AddProcedureScreen.routeName);
+                      },
                     ),
                   ],
-                )
-              : _isLoding
-                  ? Center(
-                      child: CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                          Colors.yellow,
-                        ),
-                        value: 20,
-                        strokeWidth: 15,
+                ),
+              ],
+            );
+          }
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          return Column(
+            children: [
+              Expanded(
+                flex: 3,
+                child: ListView.builder(
+                  itemCount: snapshot.data.docs.length,
+                  itemBuilder: (context, index) {
+                    DocumentSnapshot procedures = snapshot.data.docs[index];
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.of(context)
+                            .pushNamed(ProcedureDetailsScreen.routeName, arguments: procedures);
+                      },
+                      child: ProcedureItem(
+                        id: procedures['proID'],
+                        title: procedures['title'],
+                        description: procedures['description'],
+                        price: procedures['price'],
+                        // pType: procedures['proType'],
+                        // duration: procedures['duration'],
                       ),
-                    )
-                  : RefreshIndicator(
-                      onRefresh: _refreshProcedures,
-                      child: Column(
-                        children: [
-                          ProcedureList(),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              FlatButton(
-                                color: Colors.white12,
-                                child: Text(
-                                  'Add procedure',
-                                  style: TextStyle(
-                                      fontSize: 18, color: Colors.white),
-                                ),
-                                onPressed: () {
-                                  Navigator.of(context)
-                                      .pushNamed(AddProcedureScreen.routeName);
-                                },
-                              ),
-                            ],
-                          ),
-                        ],
+                    );
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 20, left: 10, right: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    FlatButton(
+                      color: Colors.white12,
+                      child: Text(
+                        'Add procedure',
+                        style: TextStyle(fontSize: 18, color: Colors.white),
                       ),
+                      onPressed: () {
+                        Navigator.of(context)
+                            .pushNamed(AddProcedureScreen.routeName);
+                      },
                     ),
-        ),
+                  ],
+                ),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
